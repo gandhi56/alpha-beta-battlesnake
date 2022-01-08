@@ -49,10 +49,7 @@ def choose_move(data: dict) -> str:
     my_head = data["you"]["head"]  # A dictionary of x/y coordinates like {"x": 0, "y": 0}
     my_body = data["you"]["body"]  # A list of x/y coordinate dictionaries like [ {"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 2, "y": 0} ]
 
-    print(f"~~~ Turn: {data['turn']}  Game Mode: {data['game']['ruleset']['name']} ~~~")
-    print(f"All board data this turn: {data}")
-    print(f"My Battlesnakes head this turn is: {my_head}")
-    print(f"My Battlesnakes body this turn is: {my_body}")
+    print(f"{data['game'].keys()}")
 
     possible_moves = ["up", "down", "left", "right"]
 
@@ -60,8 +57,9 @@ def choose_move(data: dict) -> str:
     possible_moves = avoid_my_neck(my_head, my_body, possible_moves)
 
     # TODO: Using information from 'data', find the edges of the board and don't let your Battlesnake move beyond them
-    # board_height = ?
-    # board_width = ?
+    board_height = data['board']['height']
+    board_width = data['board']['width']
+    print(f'>>> board size = {board_width} x {board_height}')
 
     # TODO Using information from 'data', don't let your Battlesnake pick a move that would hit its own body
 
