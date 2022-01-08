@@ -2,13 +2,15 @@ import random
 from typing import List, Dict
 import json # only for debugging
 
+board_width = 11
+board_height = 11
+
 """
 This file can be a nice home for your move logic, and to write helper functions.
 
 We have started this for you, with a function to help remove the 'neck' direction
 from the list of possible moves!
 """
-
 
 def avoid_my_neck(my_head: Dict[str, int], my_body: List[dict], possible_moves: List[str]) -> List[str]:
     """
@@ -34,6 +36,23 @@ def avoid_my_neck(my_head: Dict[str, int], my_body: List[dict], possible_moves: 
 
     return possible_moves
 
+def get_head_pos(head: Dict[str, int], move: str):
+    if move == 'left':
+        return {'x':head['x']-1, 'y':head['y']  }
+    if move == 'right':
+        return {'x':head['x']+1, 'y':head['y']  }
+    if move == 'up':
+        return {'x':head['x']  , 'y':head['y']+1}
+    if move == 'down':
+        return {'x':head['x']  , 'y':head['y']-1}
+
+def in_bounds(pos):
+    return pos['x'] >= 0 and pos['x'] < board_width and pos['y'] >= 0 and pos['y'] < board_height
+
+def suicide_move(body: List[dict], move: str):
+    if get_head_pos(body[0], move) in body[1:]:
+        return True
+    return False
 
 def choose_move(data: dict) -> str:
     """
@@ -47,6 +66,8 @@ def choose_move(data: dict) -> str:
     for each move of the game.
 
     """
+    global board_height, board_width
+
     my_head = data["you"]["head"]  # A dictionary of x/y coordinates like {"x": 0, "y": 0}
     my_body = data["you"]["body"]  # A list of x/y coordinate dictionaries like [ {"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 2, "y": 0} ]
     possible_moves = ["up", "down", "left", "right"]
@@ -58,8 +79,14 @@ def choose_move(data: dict) -> str:
     board_width = data['board']['width']
     print(f'>>> board size = {board_width} x {board_height}')
 
-    # TODO Using information from 'data', don't let your Battlesnake pick a move that would hit its own body
-    print(json.dumps(data))
+    # don't let your Battlesnake pick a move that would hit its own body
+    bad_moves = []
+    for move in possible_moves:
+        if suicide_move(data['you']['body'], move):
+            bad_moves.append(move)
+
+    for move in bad_moves:
+        possible_moves.remove(move)
 
     # TODO: Using information from 'data', don't let your Battlesnake pick a move that would collide with another Battlesnake
 
