@@ -82,7 +82,7 @@ def choose_move(data: dict) -> str:
     # don't let your Battlesnake pick a move that would hit its own body
     bad_moves = []
     for move in possible_moves:
-        if suicide_move(data['you']['body'], move):
+        if suicide_move(data['you']['body'], move) or not in_bounds(data['you']['head']):
             bad_moves.append(move)
 
     for move in bad_moves:
