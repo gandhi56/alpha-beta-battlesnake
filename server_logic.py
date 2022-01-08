@@ -79,10 +79,12 @@ def choose_move(data: dict) -> str:
     board_width = data['board']['width']
     print(f'>>> board size = {board_width} x {board_height}')
 
-    # don't let your Battlesnake pick a move that would hit its own body
+    # don't let your Battlesnake pick a move that would hit its own body or goes out of bounds
     bad_moves = []
     for move in possible_moves:
-        if suicide_move(data['you']['body'], move) or not in_bounds(data['you']['head']):
+        if suicide_move(data['you']['body'], move):
+            bad_moves.append(move)
+        if not in_bounds(get_head_pos(data['you']['head'], move)):
             bad_moves.append(move)
 
     for move in bad_moves:
