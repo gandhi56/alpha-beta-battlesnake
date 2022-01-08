@@ -60,7 +60,7 @@ def offensive(snakes: List[dict], mysnake: dict, move: str) -> bool:
             continue
 
         next_head_pos = get_head_pos(mysnake['head'], move)
-        if next_head_pos in snake['body']:
+        if next_head_pos in snake['body'][1:]:
             return True
 
     return False
