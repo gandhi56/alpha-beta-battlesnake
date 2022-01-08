@@ -36,7 +36,7 @@ def avoid_my_neck(my_head: Dict[str, int], my_body: List[dict], possible_moves: 
 
     return possible_moves
 
-def get_head_pos(head: Dict[str, int], move: str):
+def get_head_pos(head: Dict[str, int], move: str) -> dict:
     if move == 'left':
         return {'x':head['x']-1, 'y':head['y']  }
     if move == 'right':
@@ -46,12 +46,23 @@ def get_head_pos(head: Dict[str, int], move: str):
     if move == 'down':
         return {'x':head['x']  , 'y':head['y']-1}
 
-def in_bounds(pos):
+def in_bounds(pos) -> bool:
     return pos['x'] >= 0 and pos['x'] < board_width and pos['y'] >= 0 and pos['y'] < board_height
 
 def suicide_move(body: List[dict], move: str):
     if get_head_pos(body[0], move) in body[1:]:
         return True
+    return False
+
+def offensive(snakes: List[dict], mysnake: dict, move: str) -> bool:
+    for snake in snakes:
+        if snake['id'] == mysnake['id']:
+            continue
+
+        next_head_pos = get_head_pos(mysnake['head'], move)
+        if next_head_pos in snake['body']:
+            return True
+
     return False
 
 def choose_move(data: dict) -> str:
@@ -80,21 +91,23 @@ def choose_move(data: dict) -> str:
     print(f'>>> board size = {board_width} x {board_height}')
 
     # don't let your Battlesnake pick a move that would hit its own body or goes out of bounds
-    bad_moves = []
+    bad_moves = set()
     for move in possible_moves:
         if suicide_move(data['you']['body'], move):
             bad_moves.append(move)
+            continue
         if not in_bounds(get_head_pos(data['you']['head'], move)):
             bad_moves.append(move)
-
-    for move in bad_moves:
-        possible_moves.remove(move)
-
-    # TODO: Using information from 'data', don't let your Battlesnake pick a move that would collide with another Battlesnake
+            continue
+        if offensive(data['board']['snakes'], data['you'], move):
+            bad_moves.append(move)
+            continue
 
     # TODO: Using information from 'data', make your Battlesnake move towards a piece of food on the board
 
     # Choose a random direction from the remaining possible_moves to move in, and then return that move
+    for move in bad_moves:
+        possible_moves.remove(move)
     move = random.choice(possible_moves)
     # TODO: Explore new strategies for picking a move that are better than random
 
