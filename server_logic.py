@@ -94,13 +94,13 @@ def choose_move(data: dict) -> str:
     bad_moves = set()
     for move in possible_moves:
         if suicide_move(data['you']['body'], move):
-            bad_moves.append(move)
+            bad_moves.add(move)
             continue
         if not in_bounds(get_head_pos(data['you']['head'], move)):
-            bad_moves.append(move)
+            bad_moves.add(move)
             continue
         if offensive(data['board']['snakes'], data['you'], move):
-            bad_moves.append(move)
+            bad_moves.add(move)
             continue
 
     # TODO: Using information from 'data', make your Battlesnake move towards a piece of food on the board
